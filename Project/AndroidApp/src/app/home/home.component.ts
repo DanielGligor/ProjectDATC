@@ -4,7 +4,9 @@ import {registerElement} from "nativescript-angular/element-registry";
 import { MapView, Position } from 'nativescript-google-maps-sdk';
 import * as GoogleMapsUtils from "nativescript-google-maps-utils";
 // Important - must register MapView plugin in order to use in Angular templates
-registerElement('MapView', () => MapView);
+//registerElement('MapView', () => MapView);
+
+
 
 @Component({
     selector: "Home",
@@ -25,13 +27,13 @@ export class HomeComponent implements OnInit {
     padding = [40, 40, 40, 40];
 
     //Map events
-   public onMapReady(event) {
+   /*public onMapReady(event) {
         console.log("Map Ready");
         this.mapView = event.object;
        // console.log(GoogleMapsUtils);
         this.position[0] = Position.positionFromLatLng(45.745622488138366, 21.22827367832417);
        GoogleMapsUtils.setupHeatmap(this.mapView, this.position);
-    };
+    };*/
     constructor() {
         // Use the component constructor to inject providers.
     }

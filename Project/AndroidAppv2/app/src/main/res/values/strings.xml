@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">DATC</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="textview">Temperatura / Umiditate</string>
+    <string name="get_temp">GET</string>
+
+</resources>
