@@ -2,6 +2,8 @@
     <string name="app_name">DATC</string>
     <string name="title_activity_maps">Map</string>
     <string name="textview">Temperatura / Umiditate</string>
-    <string name="get_temp">GET</string>
-
+    <string name="humidity">Humidity</string>
+    <string name="temperature">Temperature</string>
+    <string name="title_activity_main">Smart IRI</string>
+    <string name="temperature_map">Temperature map</string>
 </resources>

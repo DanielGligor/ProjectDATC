@@ -4,23 +4,39 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:map="http://schemas.android.com/apk/res-auto"
+    <fragment
+        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
+        android:id="@+id/map"
+        tools:context=".MapsActivity"
+        android:name="com.google.android.gms.maps.SupportMapFragment" />
 
-        android:layout_marginTop="0dp"
-        tools:context=".MapsActivity" />
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="130dp"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="179dp"
+        android:layout_marginLeft="179dp"
+        android:layout_marginTop="61dp"
+
+        android:layout_marginEnd="75dp"
+        android:layout_marginRight="75dp"
+        android:background="#359c5e"
+        android:padding="8dp"
+        android:text="@string/humidity"
+        android:textColor="#ffffff" />
 
     <Button
         android:id="@+id/button1"
-        android:layout_width="50dp"
-        android:layout_height="38dp"
-        android:layout_alignBottom="@+id/map"
+        android:layout_width="132dp"
+        android:layout_height="41dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
@@ -28,13 +44,13 @@
         android:layout_alignParentRight="true"
         android:layout_marginStart="41dp"
         android:layout_marginLeft="41dp"
-        android:layout_marginTop="64dp"
-        android:layout_marginEnd="293dp"
-        android:layout_marginRight="293dp"
-        android:layout_marginBottom="409dp"
+        android:layout_marginTop="58dp"
+
+        android:layout_marginEnd="211dp"
+        android:layout_marginRight="211dp"
         android:background="#359c5e"
         android:padding="8dp"
-        android:text="@string/get_temp"
+        android:text="@string/temperature"
         android:textColor="#ffffff" />
 
     <TextView
