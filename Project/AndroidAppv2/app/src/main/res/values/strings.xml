@@ -1,9 +1,16 @@
 <resources>
     <string name="app_name">DATC</string>
     <string name="title_activity_maps">Map</string>
-    <string name="textview">Temperatura / Umiditate</string>
+    <string name="textview">Temperature / Humidity</string>
     <string name="humidity">Humidity</string>
+    <string name="back">Back</string>
     <string name="temperature">Temperature</string>
     <string name="title_activity_main">Smart IRI</string>
     <string name="temperature_map">Temperature map</string>
+    <string-array name="fields_array">
+        <item>Field #1</item>
+        <item>Field #2</item>
+        <item>Field #3</item>
+        <item>Field #4</item>
+    </string-array>
 </resources>
