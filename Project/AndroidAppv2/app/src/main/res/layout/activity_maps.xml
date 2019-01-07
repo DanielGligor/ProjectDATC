@@ -294,8 +294,8 @@
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/button8"
         android:layout_alignBottom="@+id/button3"
-        android:layout_marginEnd="-83dp"
-        android:layout_marginBottom="-6dp"
+        android:layout_marginEnd="-84dp"
+        android:layout_marginBottom="-9dp"
         android:text="    -3   1   3   7  11 15  20  25"
         android:textColor="@android:color/black"
         android:textSize="10sp" />

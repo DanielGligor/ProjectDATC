@@ -29,8 +29,15 @@ import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.maps.model.TileOverlay;
+import com.google.android.gms.maps.model.TileOverlayOptions;
+import com.google.android.gms.maps.model.TileProvider;
+import com.google.maps.android.heatmaps.Gradient;
+import com.google.maps.android.heatmaps.HeatmapTileProvider;
+import com.google.maps.android.heatmaps.WeightedLatLng;
 import com.google.maps.android.ui.IconGenerator;
 
+import java.util.ArrayList;
 import java.util.function.IntBinaryOperator;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -49,19 +56,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Button cancel;
     private Button irrigate;
     private int darkRed=0xBFcc0000;
-    private int lightRed=0xBFff3300;
+    private int lightRed=0xBFff0000;
     private int darkOrange=0xBFff6600;
-    private int lightOrange=0xBFffcc00;
+    private int lightOrange=0xBFff9933;
     private int darkYellow=0xBFffcc00;
     private int darkGreen=0xBF00b300;
     private int darkBlue=0xBF003366;
     private int lightBlue=0xBF1a8cff;
     private int lightGreen=0xBF99ff33;
-    private Integer[] tempValues = {-15, 20, 30, 0};
-    private Integer[] humValues= {10, 12 ,30 ,70};
+    private Integer[] tempValues = {-15, 21, 30, 0};
+    private Integer[] humValues= {10, 12 ,30 ,80};
     private Marker[] markers =  new Marker[4];
     private LatLng[] locations = {new LatLng(45.742692, 21.246249),new LatLng(45.741678, 21.246721),new LatLng(45.742836, 21.247923),new LatLng(45.741860, 21.248976)};
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +82,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         float zoomLevel = 16.0f;
+        WeightedLatLng ll;
+        int[] colors = {
+                Color.rgb(102, 225, 0), // green
+                Color.rgb(255, 0, 0)
+                // red
+        };
+
+        float[] startPoints = {
+                0.2f, 1f
+        };
+
+        final Gradient gradient = new Gradient(colors, startPoints);
         buttons[0]= findViewById(R.id.button6);
         buttons[1]=findViewById(R.id.button7);
         buttons[2]=findViewById(R.id.button8);
@@ -98,6 +116,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         goBack = findViewById(R.id.button3);
         scaleTempNumbers = findViewById(R.id.textView);
         scaleTempTitle = findViewById(R.id.textView2);
+
         fullMap = mMap.addPolygon(new PolygonOptions()
                 .add(new LatLng(45.742872, 21.245585), new LatLng(45.743080, 21.250034), new LatLng(45.740961, 21.250924),new LatLng(45.740624, 21.246504))
                 .strokeColor(0x00FFFFFF)
@@ -109,6 +128,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         for(int i=0; i<4; i++)
         {   final Integer j=i+1;
+
             fieldButtons[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -150,8 +170,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 drawHeatMaps();
                 getTemperature();
                 enableTempScale();
-
-
             }
         });
         goToHum.setOnClickListener(new View.OnClickListener() {
@@ -163,10 +181,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 removeHeatMaps();
                 drawHumMaps();
                 getHumidity();
-                disableTempScale();
+                enableHumScale();
             }
         });
 
+    }
+
+
+    private void enableHumScale() {
+        for (int i=0; i<9; i++)
+        {
+            buttons[i].setVisibility(View.VISIBLE);
+        }
+        scaleTempNumbers.setVisibility(View.VISIBLE);
+        scaleTempTitle.setVisibility(View.VISIBLE);
+        irrigate.setVisibility(View.VISIBLE);
+        scaleTempTitle.setText("Humidity scale(%)");
+        scaleTempNumbers.setText(" 90  80  70  60 40 30 20 10");
     }
 
     private void disableFields() {
@@ -192,6 +223,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         scaleTempNumbers.setVisibility(View.VISIBLE);
         scaleTempTitle.setVisibility(View.VISIBLE);
         irrigate.setVisibility(View.VISIBLE);
+        scaleTempTitle.setText("Deegres scale(°C)");
+        scaleTempNumbers.setText("   -3   1   3   7   11 15  20  25");
 
     }
 
@@ -250,35 +283,106 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    private void getTemperature() {
+    private void getHumidity() {
 
         for(int i=0; i<4; i++){
-            if(tempValues[i] <= -3)
+            if(humValues[i] >= 90){
                 heatMaps[i].setFillColor(darkBlue);
-            else if(tempValues[i] > -3 && tempValues[i] < 1)
+                heatMaps[i].setStrokeWidth(5);
+                heatMaps[i].setStrokeColor(0x99003366);
+            }
+            else if(humValues[i] >= 80 && humValues[i] < 90){
                 heatMaps[i].setFillColor(lightBlue);
-            else if(tempValues[i] > 0 && tempValues[i] < 3)
+                heatMaps[i].setStrokeWidth(5);
+                heatMaps[i].setStrokeColor(0x991a8cff);
+            }
+            else if(humValues[i] >= 70 && humValues[i] < 80) {
                 heatMaps[i].setFillColor(lightGreen);
-            else if(tempValues[i] >= 3 && tempValues[i] < 7)
+                heatMaps[i].setStrokeWidth(5);
+                heatMaps[i].setStrokeColor(0x9999ff33);
+            }
+            else if(humValues[i] >=60 && humValues[i] < 70) {
                 heatMaps[i].setFillColor(darkGreen);
-            else if(tempValues[i] >=7 && tempValues[i] < 11)
+                heatMaps[i].setStrokeWidth(5);
+                heatMaps[i].setStrokeColor(0x9900b300);
+            }
+            else if(humValues[i] >=40 && humValues[i] < 60) {
                 heatMaps[i].setFillColor(darkYellow);
-            else if(tempValues[i] >=11 && tempValues[i] < 15)
+                heatMaps[i].setStrokeWidth(5);
+                heatMaps[i].setStrokeColor(0x99ffcc00);
+            }
+            else if(humValues[i] >=30 && humValues[i] < 40) {
                 heatMaps[i].setFillColor(lightOrange);
-            else if(tempValues[i] >= 15 && tempValues[i] < 20)
+                heatMaps[i].setStrokeWidth(5);
+                heatMaps[i].setStrokeColor(0x99ff9933);
+            }
+            else if(humValues[i] >= 20 && humValues[i] < 30) {
                 heatMaps[i].setFillColor(darkOrange);
-            else if(tempValues[i] >=20 && tempValues[i] < 25)
+                heatMaps[i].setStrokeWidth(5);
+                heatMaps[i].setStrokeColor(0x99ff6600);
+            }
+            else if(humValues[i] >=10 && humValues[i] < 20) {
                 heatMaps[i].setFillColor(lightRed);
-            else if(tempValues[i] >=25 )
+                heatMaps[i].setStrokeWidth(5);
+                heatMaps[i].setStrokeColor(0x99ff0000);
+            }
+            else if(humValues[i] <=10 ) {
                 heatMaps[i].setFillColor(darkRed);
+                heatMaps[i].setStrokeWidth(5);
+                heatMaps[i].setStrokeColor(0x99cc0000);
+            }
         }
     }
 
-    private void getHumidity() {
-        heatMaps[0].setFillColor(darkGreen);
-        heatMaps[1].setFillColor(darkRed);
-        heatMaps[2].setFillColor(darkOrange);
-        heatMaps[3].setFillColor(darkYellow);
+    private void getTemperature() {
+        for(int i=0; i<4; i++){
+            if(tempValues[i] <= -3){
+                heatMaps[i].setFillColor(darkBlue);
+                heatMaps[i].setStrokeWidth(5);
+                heatMaps[i].setStrokeColor(0x99003366);
+            }
+            else if(tempValues[i] > -3 && tempValues[i] < 1){
+                heatMaps[i].setFillColor(lightBlue);
+                heatMaps[i].setStrokeWidth(5);
+                heatMaps[i].setStrokeColor(0x991a8cff);
+            }
+            else if(tempValues[i] > 0 && tempValues[i] < 3) {
+                heatMaps[i].setFillColor(lightGreen);
+                heatMaps[i].setStrokeWidth(5);
+                heatMaps[i].setStrokeColor(0x9999ff33);
+            }
+            else if(tempValues[i] >= 3 && tempValues[i] < 7) {
+                heatMaps[i].setFillColor(darkGreen);
+                heatMaps[i].setStrokeWidth(5);
+                heatMaps[i].setStrokeColor(0x9900b300);
+            }
+            else if(tempValues[i] >=7 && tempValues[i] < 11) {
+                heatMaps[i].setFillColor(darkYellow);
+                heatMaps[i].setStrokeWidth(5);
+                heatMaps[i].setStrokeColor(0x99ffcc00);
+            }
+            else if(tempValues[i] >=11 && tempValues[i] < 15) {
+                heatMaps[i].setFillColor(lightOrange);
+                heatMaps[i].setStrokeWidth(5);
+                heatMaps[i].setStrokeColor(0x99ff9933);
+            }
+            else if(tempValues[i] >= 15 && tempValues[i] < 20) {
+                heatMaps[i].setFillColor(darkOrange);
+                heatMaps[i].setStrokeWidth(5);
+                heatMaps[i].setStrokeColor(0x99ff6600);
+            }
+            else if(tempValues[i] >=20 && tempValues[i] < 25) {
+                heatMaps[i].setFillColor(lightRed);
+                heatMaps[i].setStrokeWidth(5);
+                heatMaps[i].setStrokeColor(0x99ff0000);
+            }
+            else if(tempValues[i] >=25 ) {
+                heatMaps[i].setFillColor(darkRed);
+                heatMaps[i].setStrokeWidth(5);
+                heatMaps[i].setStrokeColor(0x99cc0000);
+            }
+        }
+
     }
 
     private void drawHumMaps() {
